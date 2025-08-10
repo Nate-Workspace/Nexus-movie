@@ -1,25 +1,21 @@
-"use client"
-
 import type React from "react"
 
-import styled from "styled-components"
+const sectionContainerStyles = {
+  marginBottom: "3rem",
+}
 
-const SectionContainer = styled.section`
-  margin-bottom: 3rem;
-`
+const sectionTitleStyles = {
+  fontSize: "1.8rem",
+  fontWeight: "700",
+  color: "#333",
+  marginBottom: "0.5rem",
+}
 
-const SectionTitle = styled.h2`
-  font-size: 1.8rem;
-  font-weight: 700;
-  color: #333;
-  margin-bottom: 0.5rem;
-`
-
-const SectionDescription = styled.p`
-  color: #666;
-  font-size: 1rem;
-  margin-bottom: 1rem;
-`
+const sectionDescriptionStyles = {
+  color: "#666",
+  fontSize: "1rem",
+  marginBottom: "1rem",
+}
 
 interface SectionProps {
   title: string
@@ -29,10 +25,10 @@ interface SectionProps {
 
 export function Section({ title, description, children }: SectionProps) {
   return (
-    <SectionContainer>
-      <SectionTitle>{title}</SectionTitle>
-      {description && <SectionDescription>{description}</SectionDescription>}
+    <section style={sectionContainerStyles}>
+      <h2 style={sectionTitleStyles}>{title}</h2>
+      {description && <p style={sectionDescriptionStyles}>{description}</p>}
       {children}
-    </SectionContainer>
+    </section>
   )
 }
