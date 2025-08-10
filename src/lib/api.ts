@@ -1,6 +1,6 @@
 import type { Movie, MovieDetails, TMDBResponse } from "./types"
 
-const API_KEY = process.env.NEXT_PUBLIC_TMDB_API_KEY || "7d62e932694fb115cc96edfa471eaf1a"
+const API_KEY = process.env.NEXT_PUBLIC_TMDB_API_KEY
 const BASE_URL = "https://api.themoviedb.org/3"
 
 export const IMAGE_BASE_URL = "https://image.tmdb.org/t/p"
