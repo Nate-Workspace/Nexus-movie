@@ -1,20 +1,12 @@
-"use client"
-
-import styled from "styled-components"
 import type { Movie } from "@/lib/types"
 import { MovieCard } from "./MovieCard"
 
-const Grid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 2rem;
-  margin-top: 1.5rem;
-
-  @media (max-width: 768px) {
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 1rem;
-  }
-`
+const gridStyles = {
+  display: "grid",
+  gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))",
+  gap: "2rem",
+  marginTop: "1.5rem",
+}
 
 interface MovieGridProps {
   movies: Movie[]
@@ -22,10 +14,10 @@ interface MovieGridProps {
 
 export function MovieGrid({ movies }: MovieGridProps) {
   return (
-    <Grid>
+    <div style={gridStyles}>
       {movies.map((movie) => (
         <MovieCard key={movie.id} movie={movie} />
       ))}
-    </Grid>
+    </div>
   )
 }

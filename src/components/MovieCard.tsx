@@ -1,8 +1,6 @@
 "use client"
 
 import type React from "react"
-
-import styled from "styled-components"
 import Image from "next/image"
 import Link from "next/link"
 import type { Movie } from "@/lib/types"
@@ -10,89 +8,72 @@ import { getImageUrl } from "@/lib/api"
 import { useFavorites } from "@/hooks/use-favourites"
 import { Heart } from "lucide-react"
 
-const Card = styled.div`
-  background: white;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-  position: relative;
-  cursor: pointer;
+const cardStyles = {
+  background: "white",
+  borderRadius: "12px",
+  overflow: "hidden",
+  boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+  transition: "all 0.3s ease",
+  position: "relative" as const,
+  cursor: "pointer",
+}
 
-  &:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
-  }
-`
+const imageContainerStyles = {
+  position: "relative" as const,
+  width: "100%",
+  height: "300px",
+  overflow: "hidden",
+}
 
-const ImageContainer = styled.div`
-  position: relative;
-  width: 100%;
-  height: 300px;
-  overflow: hidden;
-`
+const contentStyles = {
+  padding: "1rem",
+}
 
-const CardContent = styled.div`
-  padding: 1rem;
-`
+const titleStyles = {
+  fontSize: "1.1rem",
+  fontWeight: "600",
+  marginBottom: "0.5rem",
+  color: "#333",
+  lineHeight: "1.3",
+  display: "-webkit-box",
+  WebkitLineClamp: 2,
+  WebkitBoxOrient: "vertical" as const,
+  overflow: "hidden",
+}
 
-const Title = styled.h3`
-  font-size: 1.1rem;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-  color: #333;
-  line-height: 1.3;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-`
+const ratingStyles = {
+  display: "flex",
+  alignItems: "center",
+  gap: "0.5rem",
+  color: "#666",
+  fontSize: "0.9rem",
+}
 
-const Rating = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  color: #666;
-  font-size: 0.9rem;
-`
+const getRatingBadgeStyles = (rating: number) => ({
+  background: rating >= 7 ? "#10b981" : rating >= 5 ? "#f59e0b" : "#ef4444",
+  color: "white",
+  padding: "0.2rem 0.5rem",
+  borderRadius: "6px",
+  fontWeight: "600",
+  fontSize: "0.8rem",
+})
 
-const RatingBadge = styled.span<{ $rating: number }>`
-  background: ${(props) => (props.$rating >= 7 ? "#10b981" : props.$rating >= 5 ? "#f59e0b" : "#ef4444")};
-  color: white;
-  padding: 0.2rem 0.5rem;
-  border-radius: 6px;
-  font-weight: 600;
-  font-size: 0.8rem;
-`
-
-const FavoriteButton = styled.button<{ $isFavorite: boolean }>`
-  position: absolute;
-  top: 0.75rem;
-  right: 0.75rem;
-  background: rgba(0, 0, 0, 0.7);
-  border: none;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  z-index: 2;
-
-  &:hover {
-    background: rgba(0, 0, 0, 0.9);
-    transform: scale(1.1);
-  }
-
-  svg {
-    width: 20px;
-    height: 20px;
-    color: ${(props) => (props.$isFavorite ? "#ef4444" : "white")};
-    fill: ${(props) => (props.$isFavorite ? "#ef4444" : "none")};
-  }
-`
+const getFavoriteButtonStyles = (isFavorite: boolean) => ({
+  position: "absolute" as const,
+  top: "0.75rem",
+  right: "0.75rem",
+  background: "rgba(0, 0, 0, 0.7)",
+  border: "none",
+  borderRadius: "50%",
+  width: "40px",
+  height: "40px",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  cursor: "pointer",
+  transition: "all 0.2s ease",
+  zIndex: 2,
+})
 
 interface MovieCardProps {
   movie: Movie
@@ -109,8 +90,18 @@ export function MovieCard({ movie }: MovieCardProps) {
 
   return (
     <Link href={`/movie/${movie.id}`}>
-      <Card>
-        <ImageContainer>
+      <div
+        style={cardStyles}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.transform = "translateY(-8px)"
+          e.currentTarget.style.boxShadow = "0 12px 24px rgba(0, 0, 0, 0.15)"
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.transform = "translateY(0)"
+          e.currentTarget.style.boxShadow = "0 4px 6px rgba(0, 0, 0, 0.1)"
+        }}
+      >
+        <div style={imageContainerStyles}>
           <Image
             src={getImageUrl(movie.poster_path) || "/placeholder.svg"}
             alt={movie.title}
@@ -118,22 +109,34 @@ export function MovieCard({ movie }: MovieCardProps) {
             style={{ objectFit: "cover" }}
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
-          <FavoriteButton
-            $isFavorite={isFavorite(movie.id)}
+          <button
+            style={getFavoriteButtonStyles(isFavorite(movie.id))}
             onClick={handleFavoriteClick}
             aria-label={isFavorite(movie.id) ? "Remove from favorites" : "Add to favorites"}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = "rgba(0, 0, 0, 0.9)"
+              e.currentTarget.style.transform = "scale(1.1)"
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = "rgba(0, 0, 0, 0.7)"
+              e.currentTarget.style.transform = "scale(1)"
+            }}
           >
-            <Heart />
-          </FavoriteButton>
-        </ImageContainer>
-        <CardContent>
-          <Title>{movie.title}</Title>
-          <Rating>
-            <RatingBadge $rating={movie.vote_average}>{movie.vote_average.toFixed(1)}</RatingBadge>
+            <Heart
+              size={20}
+              color={isFavorite(movie.id) ? "#ef4444" : "white"}
+              fill={isFavorite(movie.id) ? "#ef4444" : "none"}
+            />
+          </button>
+        </div>
+        <div style={contentStyles}>
+          <h3 style={titleStyles}>{movie.title}</h3>
+          <div style={ratingStyles}>
+            <span style={getRatingBadgeStyles(movie.vote_average)}>{movie.vote_average.toFixed(1)}</span>
             <span>({movie.vote_count} votes)</span>
-          </Rating>
-        </CardContent>
-      </Card>
+          </div>
+        </div>
+      </div>
     </Link>
   )
 }
